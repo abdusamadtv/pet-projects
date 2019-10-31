@@ -1,0 +1,127 @@
+type Query {
+  users(query: String): [User!]!
+  posts(query: String): [Post!]!
+  comments(query: String): [Comment!]!
+}
+
+type Mutation {
+  login(data: LoginUserInput!): AuthUserOutput!
+  signup(data: SignupUserInput!): AuthUserOutput!
+  deleteUser(id: ID!): User!
+  updateUser(id: ID!, data: UpdateUserInput!): User!
+  createPost(data: CreatePostInput!): Post!
+  updatePost(id: ID!, data: UpdatePostInput!): Post!
+  deletePost(id: ID!): Post!
+  createComment(data: CreateCommentInput!): Comment!
+  updateComment(id: ID!, data: UpdateCommentInput!): Comment!
+  deleteComment(id: ID!): Comment!
+}
+
+type Subscription {
+  posts: PostSubscriptionPayload!
+  comments(postId: ID!): CommentSubscriptionPayload!
+}
+
+type User {
+  id: ID!
+  name: String!
+  email: String!
+  password: String!
+  age: Int
+  posts: [Post!]!
+  comments: [Comment!]!
+}
+
+type Post {
+  id: ID!
+  title: String!
+  body: String!
+  isPublished: Boolean!
+  author: User!
+  comments: [Comment!]!
+}
+
+type Comment {
+  id: ID!
+  text: String!
+  post: Post!
+  author: User!
+}
+
+input LoginUserInput {
+  email: String!
+  password: String!
+}
+
+input SignupUserInput {
+  name: String!
+  email: String!
+  password: String!
+  age: Int
+}
+
+type AuthUserOutput {
+  user: User!
+  token: String!
+}
+
+input UpdateUserInput {
+  name: String
+  email: String
+  age: Int
+}
+
+input CreatePostInput {
+  title: String!
+  body: String!
+  isPublished: Boolean!
+  author: ID!
+}
+
+input UpdatePostInput {
+  title: String
+  body: String
+  isPublished: Boolean
+}
+
+input CreateCommentInput {
+  text: String!
+  post: ID!
+  author: ID!
+}
+
+input UpdateCommentInput {
+  text: String
+}
+
+enum MutationType {
+  CREATED
+  UPDATED
+  DELETED
+}
+
+type PostSubscriptionPayload {
+  mutation: MutationType!
+  node: Post
+  updatedFields: [String!]
+  previousValues: PostPreviousValues
+}
+
+type CommentSubscriptionPayload {
+  mutation: MutationType!
+  node: Comment
+  updatedFields: [String!]
+  previousValues: CommentPreviousValues
+}
+
+type PostPreviousValues {
+  id: ID!
+  title: String!
+  body: String!
+  isPublished: Boolean!
+}
+
+type CommentPreviousValues {
+  id: ID!
+  text: String!
+}
